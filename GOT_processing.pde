@@ -23,19 +23,23 @@ float right;
 float up;
 float down;
 String mode;
-Boolean modeSelected = false;
+boolean modeSelected = false;
+boolean started = false;
 float gravity = .5;
 ArrayList<Button> Buttons;
 float ground = 500;
 ArrayList<Whitewalker> Whitewalkers;
 boolean gameOver = false;
-PImage Heart;
+PImage Heart,Title,StartButtonSelected,StartButtonUnselected;
 void setup()
 {
   size(1200, 800);
   frameRate(60);
   noStroke();
   Heart = loadImage("Heart.png");
+  Title = loadImage("title.png");
+  StartButtonSelected = loadImage("startButton.png");
+  StartButtonUnselected = loadImage("startButtonDark.png");
   Buttons = new ArrayList<Button>();
   Whitewalkers = new ArrayList<Whitewalker>();
   Buttons.add(new Button(600,400,200,100,"Whitewalker Assault",255,0,0));
@@ -52,59 +56,73 @@ void setup()
 void draw()
 {
   background(210,255,255);
-  if(!modeSelected) {
-     for (int i = Buttons.size() - 1; i >= 0; i--) {
-        Button b = Buttons.get(i);
-        b.display();
-     }
-     textAlign(CENTER,CENTER);
-     textSize(50);
-     fill(0,0,0);
-     text("Select a Mode: ",600,200);
-  }
-  if(!gameOver) {
-      if(modeSelected) {
-        if(mode.equals("Whitewalker Assault")) {
-           updatejonSnow();
-           if(frameCount%10 == 0) {
-              if(log(frameCount)/log(8) > random(10)) {
-                 Whitewalkers.add(new Whitewalker(int(random(2)),random(2,10)));
-              }
-           }
-           if(Whitewalkers.size() > 0) {
-              for(int i = Whitewalkers.size()-1; i>=0; i--) {
-                  Whitewalker w = Whitewalkers.get(i);
-                  w.update();
-                  w.attack();
-                  w.display();
-              }
-           }
-          fill(0,0,0);
-          textSize(20);
-          text("Kills: " + jonSnow.kills,50,50);
-          for(int i = 0; i < jonSnow.lives; i++) {
-            image(Heart,1000+40*i,50,40,40);  
+  if(started) {
+    if(!modeSelected) {
+       for (int i = Buttons.size() - 1; i >= 0; i--) {
+          Button b = Buttons.get(i);
+          b.display();
+       }
+       textAlign(CENTER,CENTER);
+       textSize(50);
+       fill(0,0,0);
+       text("Select a Mode: ",600,200);
+    }
+    if(!gameOver) {
+        if(modeSelected) {
+          if(mode.equals("Whitewalker Assault")) {
+             updatejonSnow();
+             if(frameCount%10 == 0) {
+                if(log(frameCount)/log(8) > random(10)) {
+                   Whitewalkers.add(new Whitewalker(int(random(2)),random(2,10)));
+                }
+             }
+             if(Whitewalkers.size() > 0) {
+                for(int i = Whitewalkers.size()-1; i>=0; i--) {
+                    Whitewalker w = Whitewalkers.get(i);
+                    w.update();
+                    w.attack();
+                    w.display();
+                }
+             }
+            fill(0,0,0);
+            textSize(20);
+            text("Kills: " + jonSnow.kills,50,50);
+            for(int i = 0; i < jonSnow.lives; i++) {
+              image(Heart,1000+40*i,50,40,40);  
+            }
           }
         }
-      }
+        
+    } else {
       
+       fill(255,0,0);
+       textSize(100);
+       text("GAME OVER",600,200);
+       fill(128,128,128);
+       rect(600,600,100,200);
+       fill(0,0,0);
+       textSize(50);
+       text("RIP",600,600);
+       textSize(18);
+       text("John Snow",600,525);
+       textSize(12);
+       text("He killed ",600,550);
+       text(jonSnow.kills + " whitewalkers",600,565);
+       fill(240,255,255);
+       rect(600,725,1200,150);
+    }
+  
   } else {
-    
-     fill(255,0,0);
-     textSize(100);
-     text("GAME OVER",600,200);
-     fill(128,128,128);
-     rect(600,600,100,200);
-     fill(0,0,0);
-     textSize(50);
-     text("RIP",600,600);
-     textSize(18);
-     text("John Snow",600,525);
-     textSize(12);
-     text("He killed ",600,550);
-     text(jonSnow.kills + " whitewalkers",600,565);
-     fill(240,255,255);
-     rect(600,725,1200,150);
+      imageMode(CENTER);
+      image(Title,width/2,height/2,width,height);
+      if(mouseX < 742.5 && mouseX > 457.5 && mouseY > 250 && mouseY < 350) {
+         image(StartButtonSelected,600,300,285,100);
+         if(mousePressed) {
+            started = true; 
+         }
+      } else {
+         image(StartButtonUnselected,600,300,285,100);
+      }
   }
   
 }
